@@ -1,0 +1,107 @@
+20-Nov-2025 08:20:15.512 信息 [main] org.apache.catalina.core.StandardServer.await 通过关闭端口接收到有效的关闭命令。正在停止服务器实例。
+20-Nov-2025 08:20:15.513 信息 [main] org.apache.coyote.AbstractProtocol.pause 暂停ProtocolHandler["http-nio-8080"]
+20-Nov-2025 08:20:15.514 信息 [main] org.apache.catalina.core.StandardService.stopInternal 正在停止服务[Catalina]
+20-Nov-2025 08:20:15.528 信息 [main] org.apache.coyote.AbstractProtocol.stop 正在停止ProtocolHandler ["http-nio-8080"]
+20-Nov-2025 08:20:15.537 信息 [main] org.apache.coyote.AbstractProtocol.destroy 正在销毁协议处理器 ["http-nio-8080"]
+20-Nov-2025 15:36:25.212 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Server.服务器版本: Apache Tomcat/9.0.112
+20-Nov-2025 15:36:25.214 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 服务器构建:        Nov 6 2025 07:46:18 UTC
+20-Nov-2025 15:36:25.214 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 服务器版本号:      9.0.112.0
+20-Nov-2025 15:36:25.215 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 操作系统名称:      Linux
+20-Nov-2025 15:36:25.215 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log OS.版本:           5.15.0-140-generic
+20-Nov-2025 15:36:25.215 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 架构:              amd64
+20-Nov-2025 15:36:25.215 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Java 环境变量:     /usr/lib/jvm/java-11-openjdk-amd64
+20-Nov-2025 15:36:25.215 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Java虚拟机版本:    11.0.27+6-post-Ubuntu-0ubuntu120.04
+20-Nov-2025 15:36:25.215 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log JVM.供应商:        Ubuntu
+20-Nov-2025 15:36:25.215 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:     /home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112
+20-Nov-2025 15:36:25.215 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:     /home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112
+20-Nov-2025 15:36:25.225 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       --add-opens=java.base/java.lang=ALL-UNNAMED
+20-Nov-2025 15:36:25.225 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       --add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+20-Nov-2025 15:36:25.225 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+20-Nov-2025 15:36:25.225 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       --add-opens=java.base/java.io=ALL-UNNAMED
+20-Nov-2025 15:36:25.225 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       --add-opens=java.base/java.util=ALL-UNNAMED
+20-Nov-2025 15:36:25.225 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+20-Nov-2025 15:36:25.225 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+20-Nov-2025 15:36:25.226 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Djava.util.logging.config.file=/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/conf/logging.properties
+20-Nov-2025 15:36:25.226 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+20-Nov-2025 15:36:25.226 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Djdk.tls.ephemeralDHKeySize=2048
+20-Nov-2025 15:36:25.226 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+20-Nov-2025 15:36:25.226 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Dsun.io.useCanonCaches=false
+20-Nov-2025 15:36:25.226 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+20-Nov-2025 15:36:25.226 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Dignore.endorsed.dirs=
+20-Nov-2025 15:36:25.226 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Dcatalina.base=/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112
+20-Nov-2025 15:36:25.226 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Dcatalina.home=/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112
+20-Nov-2025 15:36:25.226 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Djava.io.tmpdir=/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/temp
+20-Nov-2025 15:36:25.228 信息 [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent 在java.library.path:[/usr/local/cuda-12.1/lib64:/usr/local/cuda/lib64:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/x86_64-linux-gnu:/opt/ros/foxy/lib:/home/btl/.mujoco/mujoco210/bin:/usr/lib/nvidia:/usr/java/packages/lib:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib]上找不到基于APR的Apache Tomcat本机库，该库允许在生产环境中获得最佳性能
+20-Nov-2025 15:36:25.379 信息 [main] org.apache.coyote.AbstractProtocol.init 初始化协议处理器 ["http-nio-8080"]
+20-Nov-2025 15:36:25.394 信息 [main] org.apache.catalina.startup.Catalina.load 服务器在[303]毫秒内初始化
+20-Nov-2025 15:36:25.426 信息 [main] org.apache.catalina.core.StandardService.startInternal 正在启动服务[Catalina]
+20-Nov-2025 15:36:25.426 信息 [main] org.apache.catalina.core.StandardEngine.startInternal 正在启动 Servlet 引擎：[Apache Tomcat/9.0.112]
+20-Nov-2025 15:36:25.431 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory 把web 应用程序部署到目录 [/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/host-manager]
+20-Nov-2025 15:36:25.605 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory Web应用程序目录[/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/host-manager]的部署已在[173]毫秒内完成
+20-Nov-2025 15:36:25.605 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory 把web 应用程序部署到目录 [/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/manager]
+20-Nov-2025 15:36:25.619 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory Web应用程序目录[/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/manager]的部署已在[14]毫秒内完成
+20-Nov-2025 15:36:25.620 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory 把web 应用程序部署到目录 [/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/examples]
+20-Nov-2025 15:36:25.741 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory Web应用程序目录[/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/examples]的部署已在[121]毫秒内完成
+20-Nov-2025 15:36:25.742 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory 把web 应用程序部署到目录 [/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/btl]
+20-Nov-2025 15:36:25.757 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory Web应用程序目录[/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/btl]的部署已在[15]毫秒内完成
+20-Nov-2025 15:36:25.757 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory 把web 应用程序部署到目录 [/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/ROOT]
+20-Nov-2025 15:36:25.766 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory Web应用程序目录[/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/ROOT]的部署已在[9]毫秒内完成
+20-Nov-2025 15:36:25.766 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory 把web 应用程序部署到目录 [/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/docs]
+20-Nov-2025 15:36:25.777 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory Web应用程序目录[/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/docs]的部署已在[11]毫秒内完成
+20-Nov-2025 15:36:25.781 信息 [main] org.apache.coyote.AbstractProtocol.start 开始协议处理句柄["http-nio-8080"]
+20-Nov-2025 15:36:25.786 信息 [main] org.apache.catalina.startup.Catalina.start [391]毫秒后服务器启动
+20-Nov-2025 15:52:45.998 信息 [Catalina-utility-1] org.apache.catalina.startup.HostConfig.deployDirectory 把web 应用程序部署到目录 [/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/images]
+20-Nov-2025 15:52:46.027 信息 [Catalina-utility-1] org.apache.catalina.startup.HostConfig.deployDirectory Web应用程序目录[/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/images]的部署已在[29]毫秒内完成
+20-Nov-2025 15:55:16.548 信息 [Catalina-utility-2] org.apache.catalina.startup.HostConfig.undeploy 正在取消部署上下文[/images]
+20-Nov-2025 16:24:06.801 信息 [main] org.apache.catalina.core.StandardServer.await 通过关闭端口接收到有效的关闭命令。正在停止服务器实例。
+20-Nov-2025 16:24:06.801 信息 [main] org.apache.coyote.AbstractProtocol.pause 暂停ProtocolHandler["http-nio-8080"]
+20-Nov-2025 16:24:06.803 信息 [main] org.apache.catalina.core.StandardService.stopInternal 正在停止服务[Catalina]
+20-Nov-2025 16:24:06.810 信息 [main] org.apache.coyote.AbstractProtocol.stop 正在停止ProtocolHandler ["http-nio-8080"]
+20-Nov-2025 16:24:06.813 信息 [main] org.apache.coyote.AbstractProtocol.destroy 正在销毁协议处理器 ["http-nio-8080"]
+20-Nov-2025 17:11:00.132 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Server.服务器版本: Apache Tomcat/9.0.112
+20-Nov-2025 17:11:00.134 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 服务器构建:        Nov 6 2025 07:46:18 UTC
+20-Nov-2025 17:11:00.134 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 服务器版本号:      9.0.112.0
+20-Nov-2025 17:11:00.134 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 操作系统名称:      Linux
+20-Nov-2025 17:11:00.134 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log OS.版本:           5.15.0-140-generic
+20-Nov-2025 17:11:00.134 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 架构:              amd64
+20-Nov-2025 17:11:00.134 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Java 环境变量:     /usr/lib/jvm/java-11-openjdk-amd64
+20-Nov-2025 17:11:00.135 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log Java虚拟机版本:    11.0.27+6-post-Ubuntu-0ubuntu120.04
+20-Nov-2025 17:11:00.135 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log JVM.供应商:        Ubuntu
+20-Nov-2025 17:11:00.135 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:     /home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112
+20-Nov-2025 17:11:00.135 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:     /home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112
+20-Nov-2025 17:11:00.140 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       --add-opens=java.base/java.lang=ALL-UNNAMED
+20-Nov-2025 17:11:00.140 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       --add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+20-Nov-2025 17:11:00.140 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+20-Nov-2025 17:11:00.140 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       --add-opens=java.base/java.io=ALL-UNNAMED
+20-Nov-2025 17:11:00.140 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       --add-opens=java.base/java.util=ALL-UNNAMED
+20-Nov-2025 17:11:00.140 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+20-Nov-2025 17:11:00.140 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED
+20-Nov-2025 17:11:00.141 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Djava.util.logging.config.file=/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/conf/logging.properties
+20-Nov-2025 17:11:00.141 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+20-Nov-2025 17:11:00.141 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Djdk.tls.ephemeralDHKeySize=2048
+20-Nov-2025 17:11:00.141 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+20-Nov-2025 17:11:00.141 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Dsun.io.useCanonCaches=false
+20-Nov-2025 17:11:00.141 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+20-Nov-2025 17:11:00.141 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Dignore.endorsed.dirs=
+20-Nov-2025 17:11:00.141 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Dcatalina.base=/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112
+20-Nov-2025 17:11:00.141 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Dcatalina.home=/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112
+20-Nov-2025 17:11:00.141 信息 [main] org.apache.catalina.startup.VersionLoggerListener.log 命令行参数：       -Djava.io.tmpdir=/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/temp
+20-Nov-2025 17:11:00.143 信息 [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent 在java.library.path:[/usr/local/cuda-12.1/lib64:/usr/local/cuda/lib64:/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/x86_64-linux-gnu:/opt/ros/foxy/lib:/home/btl/.mujoco/mujoco210/bin:/usr/lib/nvidia:/usr/java/packages/lib:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib]上找不到基于APR的Apache Tomcat本机库，该库允许在生产环境中获得最佳性能
+20-Nov-2025 17:11:00.277 信息 [main] org.apache.coyote.AbstractProtocol.init 初始化协议处理器 ["http-nio-8080"]
+20-Nov-2025 17:11:00.287 信息 [main] org.apache.catalina.startup.Catalina.load 服务器在[274]毫秒内初始化
+20-Nov-2025 17:11:00.313 信息 [main] org.apache.catalina.core.StandardService.startInternal 正在启动服务[Catalina]
+20-Nov-2025 17:11:00.313 信息 [main] org.apache.catalina.core.StandardEngine.startInternal 正在启动 Servlet 引擎：[Apache Tomcat/9.0.112]
+20-Nov-2025 17:11:00.316 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory 把web 应用程序部署到目录 [/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/host-manager]
+20-Nov-2025 17:11:00.450 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory Web应用程序目录[/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/host-manager]的部署已在[133]毫秒内完成
+20-Nov-2025 17:11:00.450 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory 把web 应用程序部署到目录 [/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/manager]
+20-Nov-2025 17:11:00.462 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory Web应用程序目录[/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/manager]的部署已在[12]毫秒内完成
+20-Nov-2025 17:11:00.463 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory 把web 应用程序部署到目录 [/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/examples]
+20-Nov-2025 17:11:00.558 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory Web应用程序目录[/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/examples]的部署已在[95]毫秒内完成
+20-Nov-2025 17:11:00.559 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory 把web 应用程序部署到目录 [/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/btl]
+20-Nov-2025 17:11:00.572 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory Web应用程序目录[/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/btl]的部署已在[13]毫秒内完成
+20-Nov-2025 17:11:00.572 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory 把web 应用程序部署到目录 [/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/ROOT]
+20-Nov-2025 17:11:00.581 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory Web应用程序目录[/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/ROOT]的部署已在[9]毫秒内完成
+20-Nov-2025 17:11:00.581 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory 把web 应用程序部署到目录 [/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/docs]
+20-Nov-2025 17:11:00.593 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory Web应用程序目录[/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/docs]的部署已在[11]毫秒内完成
+20-Nov-2025 17:11:00.596 信息 [main] org.apache.coyote.AbstractProtocol.start 开始协议处理句柄["http-nio-8080"]
+20-Nov-2025 17:11:00.601 信息 [main] org.apache.catalina.startup.Catalina.start [313]毫秒后服务器启动

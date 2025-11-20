@@ -1,0 +1,34 @@
+-- 创建数据库
+CREATE DATABASE IF NOT EXISTS botler_robotics;
+USE botler_robotics;
+
+-- 产品表
+CREATE TABLE IF NOT EXISTS products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2),
+    image_url VARCHAR(255),
+    is_featured BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 联系表单消息表
+CREATE TABLE IF NOT EXISTS contact_messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    subject VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_read BOOLEAN DEFAULT FALSE
+);
+
+-- 插入示例产品数据
+INSERT INTO products (name, category, description, price, image_url, is_featured)
+VALUES 
+('工业自动化机器人', '工业机器人', '高精度、高效率的工业机器人，适用于装配、焊接、搬运等多种工业场景。', 125000.00, 'https://picsum.photos/id/250/600/400', TRUE),
+('服务型机器人', '服务机器人', '智能服务机器人，适用于酒店、商场、医院等场所，提供引导、咨询等服务。', 35000.00, 'https://picsum.photos/id/180/600/400', TRUE),
+('特种作业机器人', '特种机器人', '适用于危险环境作业的特种机器人，可替代人工完成消防、巡检、救援等任务。', 180000.00, 'https://picsum.photos/id/160/600/400', FALSE);
