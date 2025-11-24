@@ -49,6 +49,42 @@ async function run() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
+    // Ensure required columns exist (handle older schemas)
+    try {
+      const [cols] = await pool.execute("SHOW COLUMNS FROM users");
+      const names = cols.map(c => c.Field);
+      if (!names.includes('password_hash')) {
+        await pool.execute("ALTER TABLE users ADD COLUMN password_hash VARCHAR(255) NOT NULL AFTER email");
+        console.log('已为 users 表添加 password_hash 列');
+      }
+      // If role exists but is not varchar, change its type to VARCHAR
+      const roleCol = cols.find(c => c.Field === 'role');
+      if (!roleCol) {
+        await pool.execute("ALTER TABLE users ADD COLUMN role VARCHAR(32) NOT NULL DEFAULT 'user'");
+        console.log('已为 users 表添加 role 列');
+      } else if (!/^varchar/i.test(roleCol.Type)) {
+        await pool.execute("ALTER TABLE users MODIFY COLUMN role VARCHAR(32) NOT NULL DEFAULT 'user'");
+        console.log('已将 users.role 字段修改为 VARCHAR(32)');
+      }
+      if (!names.includes('is_super')) {
+        await pool.execute("ALTER TABLE users ADD COLUMN is_super TINYINT(1) DEFAULT 0");
+        console.log('已为 users 表添加 is_super 列');
+      }
+
+      // If legacy `password` column exists (plain-text storage), allow NULL so we can insert password_hash safely
+      if (names.includes('password')) {
+        try {
+          await pool.execute("ALTER TABLE users MODIFY COLUMN password VARCHAR(255) NULL DEFAULT NULL");
+          console.log('已将 users.password 字段修改为可空以兼容迁移');
+        } catch (e) {
+          console.warn('无法修改 users.password 字段:', e.message);
+        }
+      }
+    } catch (e) {
+      // If SHOW/ALTER fails, log and continue — later insert may still fail and be reported
+      console.warn('检测/调整 users 表列时出错（可忽略）：', e.message);
+    }
+
     // Ensure a super admin exists (idempotent)
     const superAdmin = {
       username: process.env.SUPER_ADMIN_USERNAME || 'admin',
