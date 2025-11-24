@@ -23,11 +23,42 @@ exports.register = async (req, res) => {
   }
 };
 
-// Simple helper to list users (admin-only access should be enforced by middleware in routes)
+// List users with pagination; hide sensitive fields
 exports.listUsers = async (req, res) => {
   try {
-    const [rows] = await pool.execute('SELECT id, username, email, role, is_super, created_at FROM users ORDER BY created_at DESC');
-    res.json({ success: true, data: rows });
+    const page = Math.max(1, parseInt(req.query.page || '1', 10));
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit || '25', 10)));
+    const offset = (page - 1) * limit;
+
+    // Optional role filter
+    const role = req.query.role;
+
+    let countSql = 'SELECT COUNT(*) as cnt FROM users';
+    let dataSql = 'SELECT id, username, email, role, is_super, created_at FROM users';
+    const params = [];
+    if (role) {
+      countSql += ' WHERE role = ?';
+      dataSql += ' WHERE role = ?';
+      params.push(role);
+    }
+    dataSql += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+
+    // Get total
+    const [cntRows] = await pool.execute(countSql, role ? [role] : []);
+    const total = cntRows && cntRows[0] ? cntRows[0].cnt : 0;
+
+    // Get page data
+    const qParams = params.concat([limit, offset]);
+    const [rows] = await pool.execute(dataSql, qParams);
+
+    // Ensure no sensitive fields are returned (password_hash etc.)
+    const safeRows = rows.map(r => ({ id: r.id, username: r.username, email: r.email, role: r.role, is_super: !!r.is_super, created_at: r.created_at }));
+
+    res.json({
+      success: true,
+      data: safeRows,
+      meta: { total, page, limit, pages: Math.ceil(total / limit) }
+    });
   } catch (err) {
     console.error('查询用户失败:', err);
     res.status(500).json({ success: false, message: '服务器错误' });
