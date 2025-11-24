@@ -1,5 +1,6 @@
 const { pool } = require('../db');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
   try {
@@ -19,6 +20,54 @@ exports.register = async (req, res) => {
     res.status(201).json({ success: true, message: '注册成功', data: { id: result.insertId } });
   } catch (err) {
     console.error('用户注册失败:', err);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+};
+
+// Login - returns JWT token
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ success: false, message: '缺少邮箱或密码' });
+
+    const [rows] = await pool.execute('SELECT id, username, email, password_hash, role, is_super FROM users WHERE email = ? LIMIT 1', [email]);
+    if (!rows || rows.length === 0) return res.status(401).json({ success: false, message: '账号或密码错误' });
+
+    const u = rows[0];
+    const ok = await bcrypt.compare(password, u.password_hash || '');
+    if (!ok) return res.status(401).json({ success: false, message: '账号或密码错误' });
+
+    const secret = process.env.JWT_SECRET || process.env.ADMIN_TOKEN || 'change_this_secret';
+    const payload = { id: u.id, username: u.username, email: u.email, role: u.role, is_super: u.is_super };
+    const token = jwt.sign(payload, secret, { expiresIn: '7d' });
+    res.json({ success: true, data: { token, user: payload } });
+  } catch (err) {
+    console.error('用户登录失败:', err);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+};
+
+// Update user role/is_super (admin only)
+exports.updateUser = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) return res.status(400).json({ success: false, message: '无效用户 id' });
+    const { role, is_super } = req.body;
+
+    // Basic validation
+    const updates = [];
+    const params = [];
+    if (role !== undefined) { updates.push('role = ?'); params.push(String(role)); }
+    if (is_super !== undefined) { updates.push('is_super = ?'); params.push(Number(is_super) ? 1 : 0); }
+    if (updates.length === 0) return res.status(400).json({ success: false, message: '没有提供要更新的字段' });
+
+    params.push(id);
+    const sql = `UPDATE users SET ${updates.join(', ')} WHERE id = ?`;
+    const [result] = await pool.execute(sql, params);
+    if (result.affectedRows === 0) return res.status(404).json({ success: false, message: '用户未找到' });
+    res.json({ success: true, message: '更新成功' });
+  } catch (err) {
+    console.error('更新用户失败:', err);
     res.status(500).json({ success: false, message: '服务器错误' });
   }
 };
