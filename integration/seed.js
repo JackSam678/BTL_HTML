@@ -2,6 +2,7 @@
 // Seed script to create tables and insert demo data using config/db.js pool
 const path = require('path');
 const { pool } = require(path.join('..', 'config', 'db'));
+const bcrypt = require('bcryptjs');
 
 async function run() {
   try {
@@ -34,6 +35,39 @@ async function run() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
+
+    // users 表
+    await pool.execute(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(100) NOT NULL UNIQUE,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        password_hash VARCHAR(255) NOT NULL,
+        role VARCHAR(32) NOT NULL DEFAULT 'user',
+        is_super TINYINT(1) DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
+    // Ensure a super admin exists (idempotent)
+    const superAdmin = {
+      username: process.env.SUPER_ADMIN_USERNAME || 'admin',
+      email: process.env.SUPER_ADMIN_EMAIL || 'admin@example.com',
+      password: process.env.SUPER_ADMIN_PASSWORD || 'ChangeMe123!'
+    };
+
+    // Check existing
+    const [rows] = await pool.execute('SELECT id FROM users WHERE email = ? OR username = ? LIMIT 1', [superAdmin.email, superAdmin.username]);
+    if (rows.length === 0) {
+      const hash = await bcrypt.hash(superAdmin.password, 10);
+      await pool.execute(
+        `INSERT INTO users (username, email, password_hash, role, is_super) VALUES (?, ?, ?, 'admin', 1)`,
+        [superAdmin.username, superAdmin.email, hash]
+      );
+      console.log('已创建超级管理员用户:', superAdmin.username, superAdmin.email);
+    } else {
+      console.log('超级管理员已存在，跳过创建');
+    }
 
     // Insert demo products adapted to existing schema (some deployments have different columns)
     // We'll insert into columns likely present: name, series, category_id, price, description, specification, image_url, status, sort_order

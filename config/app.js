@@ -26,6 +26,7 @@ app.get('/', (req, res) => {
 // Routes
 app.use('/api/contacts', require('./routes/contactRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 
 // Export app so tests can require it without starting a server
 // If this file is run directly (node config/app.js), start the server.
