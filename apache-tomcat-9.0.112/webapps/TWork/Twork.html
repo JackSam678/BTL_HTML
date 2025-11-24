@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechBlog - 个人技术分享平台</title>
+  <meta name="api-base" content="http://localhost:3000">
+  <!-- 引入Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- 引入Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <!-- 配置Tailwind自定义主题 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36CFC9',
+            dark: '#1D2939',
+            light: '#F9FAFB',
+            success: '#27AE60',
+            danger: '#E53E3E',
+            warning: '#F59E0B',
+            gray: {
+              100: '#F3F4F6',
+              200: '#E5E7EB',
+              300: '#D1D5DB',
+              400: '#9CA3AF',
+              500: '#6B7280',
+              600: '#4B5563',
+              700: '#374151',
+              800: '#1F2937',
+              900: '#111827'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          },
+          boxShadow: {
+            'card': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03)',
+            'card-hover': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            'modal': '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+          }
+        }
+      }
+    }
+  </script>
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .transition-custom {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .input-focus {
+        @apply focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary;
+      }
+      .btn-primary {
+        @apply bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-custom shadow-md hover:shadow-lg;
+      }
+      .btn-outline {
+        @apply border border-primary text-primary rounded-lg font-medium hover:bg-primary/5 transition-custom;
+      }
+    }
+  </style>
+  <style>
+    /* 全局样式 */
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+    /* 代码块样式 */
+    .code-block {
+      background-color: #1E293B;
+      color: #E2E8F0;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    /* 滚动条样式 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F3F4F6;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #9CA3AF;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #6B7280;
+    }
+    /* 模态框动画 */
+    .modal-enter {
+      animation: modalFadeIn 0.3s ease-out forwards;
+    }
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    /* 表单验证动画 */
+    .shake {
+      animation: shake 0.3s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+  </style>
+</head>
+<body class="bg-light text-gray-800">
+  <!-- 导航栏 -->
+  <header id="navbar" class="fixed w-full top-0 z-50 transition-custom bg-white/90 backdrop-blur-sm shadow-sm">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <a href="#" class="flex items-center space-x-2">
+          <span class="text-primary text-2xl"><i class="fa fa-code"></i></span>
+          <span class="font-bold text-xl text-dark">TechBlog</span>
+          <span id="backend-status" class="ml-3 inline-flex items-center text-sm text-gray-500" title="后端状态"><span id="backend-dot" class="w-2 h-2 rounded-full bg-yellow-400 inline-block mr-2"></span>后端：未知</span>
+        </a>
+        
+        <!-- 桌面端导航 -->
+        <nav class="hidden md:flex space-x-8">
+          <a href="#home" class="text-gray-700 hover:text-primary font-medium transition-custom">首页</a>
+          <a href="#articles" class="text-gray-700 hover:text-primary font-medium transition-custom">文章</a>
+          <a href="#categories" class="text-gray-700 hover:text-primary font-medium transition-custom">分类</a>
+          <a href="#popular" class="text-gray-700 hover:text-primary font-medium transition-custom">热门</a>
+          <a href="#about" class="text-gray-700 hover:text-primary font-medium transition-custom">关于我</a>
+        </nav>
+        
+        <!-- 用户操作区（登录/注册/用户中心） -->
+        <div class="hidden md:flex items-center space-x-4">
+          <button id="login-btn" class="px-4 py-2 btn-outline">登录</button>
+          <button id="register-btn" class="px-4 py-2 btn-primary">注册</button>
+          <!-- 登录后显示的用户菜单（默认隐藏） -->
+          <div id="user-menu" class="hidden relative">
+            <button class="flex items-center space-x-2 px-3 py-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-custom">
+              <img src="https://picsum.photos/id/64/100/100" alt="用户头像" class="w-8 h-8 rounded-full object-cover">
+              <span class="text-gray-700 font-medium">张小明</span>
+              <i class="fa fa-chevron-down text-xs text-gray-500"></i>
+            </button>
+            <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-modal py-2 z-50">
+              <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-custom">
+                <i class="fa fa-user-o mr-2"></i>个人中心
+              </a>
+              <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-custom">
+                <i class="fa fa-bookmark-o mr-2"></i>我的收藏
+              </a>
+              <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-custom">
+                <i class="fa fa-pencil mr-2"></i>发布文章
+              </a>
+              <div class="border-t border-gray-100 my-1"></div>
+              <a href="#" id="logout-btn" class="block px-4 py-2 text-danger hover:bg-gray-100 transition-custom">
+                <i class="fa fa-sign-out mr-2"></i>退出登录
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 搜索按钮 -->
+        <button class="text-gray-600 hover:text-primary transition-custom mr-2 md:mr-0">
+          <i class="fa fa-search text-lg"></i>
+        </button>
+        
+        <!-- 移动端菜单按钮 -->
+        <button id="menu-toggle" class="md:hidden text-gray-700 hover:text-primary transition-custom">
+          <i class="fa fa-bars text-xl"></i>
+        </button>
+      </div>
+    </div>
+    
+    <!-- 移动端导航菜单 -->
+    <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-100 shadow-lg">
+      <div class="container mx-auto px-4 py-3 space-y-3">
+        <a href="#home" class="block text-gray-700 hover:text-primary font-medium py-2 transition-custom">首页</a>
+        <a href="#articles" class="block text-gray-700 hover:text-primary font-medium py-2 transition-custom">文章</a>
+        <a href="#categories" class="block text-gray-700 hover:text-primary font-medium py-2 transition-custom">分类</a>
+        <a href="#popular" class="block text-gray-700 hover:text-primary font-medium py-2 transition-custom">热门</a>
+        <a href="#about" class="block text-gray-700 hover:text-primary font-medium py-2 transition-custom">关于我</a>
+        <div class="flex space-x-3 mt-2">
+          <button id="mobile-login-btn" class="flex-1 py-2 btn-outline">登录</button>
+          <button id="mobile-register-btn" class="flex-1 py-2 btn-primary">注册</button>
+        </div>
+        <div class="relative mt-3">
+          <input type="text" placeholder="搜索文章..." class="w-full px-4 py-2 rounded-lg border border-gray-200 input-focus">
+          <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+            <i class="fa fa-search"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 英雄区（优化了间距和视觉层次） -->
+  <section id="home" class="pt-28 pb-16 md:pt-36 md:pb-24 bg-gradient-to-br from-primary/5 to-secondary/5">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center">
+        <div class="md:w-1/2 mb-10 md:mb-0 md:pr-8">
+          <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-dark leading-tight text-shadow mb-4">
+            分享技术，<br>
+            <span class="text-primary">记录成长</span>
+          </h1>
+          <p class="text-gray-600 text-lg md:text-xl mb-8 max-w-lg">
+            专注于前端开发、后端技术、云原生和人工智能的技术博客，每周分享实用教程和经验总结。注册账号即可收藏文章、发布内容！
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <a href="#articles" class="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-custom shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+              浏览文章
+            </a>
+            <a href="#register-modal" id="hero-register-btn" class="px-6 py-3 bg-white text-primary border border-primary rounded-lg font-medium hover:bg-primary/5 transition-custom shadow hover:shadow-md">
+              立即注册
+            </a>
+          </div>
+          <div class="mt-10 flex items-center space-x-6">
+            <a href="#" class="text-gray-500 hover:text-primary transition-custom" title="GitHub">
+              <i class="fa fa-github text-2xl"></i>
+            </a>
+            <a href="#" class="text-gray-500 hover:text-primary transition-custom" title="掘金">
+              <i class="fa fa-code text-2xl"></i>
+            </a>
+            <a href="#" class="text-gray-500 hover:text-primary transition-custom" title="知乎">
+              <i class="fa fa-book text-2xl"></i>
+            </a>
+            <a href="#" class="text-gray-500 hover:text-primary transition-custom" title="微信公众号">
+              <i class="fa fa-weixin text-2xl"></i>
+            </a>
+          </div>
+        </div>
+        <div class="md:w-1/2 relative">
+          <div class="relative z-10 bg-white rounded-2xl shadow-2xl p-6 transform rotate-2 hover:rotate-0 transition-custom">
+            <img src="https://picsum.photos/id/0/600/400" alt="技术博客展示" class="rounded-xl w-full h-auto">
+            <div class="absolute top-4 right-4 bg-primary/90 text-white text-sm font-medium px-3 py-1 rounded-full">
+              最新文章
+            </div>
+            <!-- 新增用户福利标签 -->
+            <div class="absolute bottom-4 left-4 bg-success/90 text-white text-sm font-medium px-3 py-1 rounded-full flex items-center">
+              <i class="fa fa-gift mr-1"></i> 注册送专栏
+            </div>
+          </div>
+          <div class="absolute top-10 left-10 w-64 h-64 bg-primary/10 rounded-2xl -z-10"></div>
+          <div class="absolute bottom-10 right-10 w-48 h-48 bg-secondary/10 rounded-2xl -z-10"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 文章列表区（优化了卡片hover效果） -->
+  <section id="articles" class="py-16 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-dark mb-4">最新技术文章</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">分享前端、后端、云原生、AI等领域的实用技术教程和经验总结，帮助开发者快速成长</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- 文章卡片1 -->
+        <article class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom transform hover:-translate-y-1 group overflow-hidden">
+          <div class="relative overflow-hidden rounded-t-xl">
+            <img src="https://picsum.photos/id/180/600/400" alt="React 18新特性详解" class="w-full h-48 object-cover transition-custom group-hover:scale-105 duration-500">
+            <div class="absolute top-4 left-4 bg-primary text-white text-xs font-medium px-2 py-1 rounded-md">
+              前端开发
+            </div>
+            <!-- 收藏按钮（登录后显示） -->
+            <button class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-gray-500 hover:text-danger transition-custom">
+              <i class="fa fa-heart-o"></i>
+            </button>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center text-gray-500 text-sm mb-3">
+              <span><i class="fa fa-calendar-o mr-1"></i> 2025-11-20</span>
+              <span class="mx-2">•</span>
+              <span><i class="fa fa-eye mr-1"></i> 1.2k</span>
+              <span class="mx-2">•</span>
+              <span><i class="fa fa-comment-o mr-1"></i> 32</span>
+            </div>
+            <h3 class="text-xl font-bold text-dark mb-3 group-hover:text-primary transition-custom">
+              <a href="#">React 18新特性详解：并发渲染与自动批处理</a>
+            </h3>
+            <p class="text-gray-600 mb-4 line-clamp-3">
+              本文详细介绍React 18的核心新特性，包括并发渲染、自动批处理、Transitions API等，结合实际案例讲解如何在项目中应用这些特性提升用户体验...
+            </p>
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <img src="https://picsum.photos/id/64/100/100" alt="作者头像" class="w-10 h-10 rounded-full object-cover">
+                <span class="ml-2 text-gray-700 font-medium">张小明</span>
+              </div>
+              <a href="#" class="text-primary font-medium hover:underline flex items-center">
+                阅读更多 <i class="fa fa-arrow-right ml-1 transition-custom group-hover:translate-x-1"></i>
+              </a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 远程产品（来自后端 /api/products） -->
+  <section id="remote-products" class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-bold text-dark">后端产品 (实时)</h2>
+        <div id="remote-products-status" class="text-sm text-gray-500">加载中…</div>
+      </div>
+      <div id="remote-products-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- 动态加载的产品卡片将插入这里 -->
+      </div>
+    </div>
+  </section>
+
+        <!-- 文章卡片2-6 保持原有结构，统一添加收藏按钮 -->
+        <!-- 文章卡片2 -->
+        <article class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom transform hover:-translate-y-1 group overflow-hidden">
+          <div class="relative overflow-hidden rounded-t-xl">
+            <img src="https://picsum.photos/id/160/600/400" alt="Spring Boot 3.0实战" class="w-full h-48 object-cover transition-custom group-hover:scale-105 duration-500">
+            <div class="absolute top-4 left-4 bg-secondary text-white text-xs font-medium px-2 py-1 rounded-md">
+              后端开发
+            </div>
+            <button class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-gray-500 hover:text-danger transition-custom">
+              <i class="fa fa-heart-o"></i>
+            </button>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center text-gray-500 text-sm mb-3">
+              <span><i class="fa fa-calendar-o mr-1"></i> 2025-11-15</span>
+              <span class="mx-2">•</span>
+              <span><i class="fa fa-eye mr-1"></i> 2.5k</span>
+              <span class="mx-2">•</span>
+              <span><i class="fa fa-comment-o mr-1"></i> 48</span>
+            </div>
+            <h3 class="text-xl font-bold text-dark mb-3 group-hover:text-primary transition-custom">
+              <a href="#">Spring Boot 3.0实战：从零搭建微服务架构</a>
+            </h3>
+            <p class="text-gray-600 mb-4 line-clamp-3">
+              基于Spring Boot 3.0和Spring Cloud Alibaba，从零开始搭建一套完整的微服务架构，包括服务注册发现、配置中心、网关、熔断降级等核心组件...
+            </p>
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <img src="https://picsum.photos/id/64/100/100" alt="作者头像" class="w-10 h-10 rounded-full object-cover">
+                <span class="ml-2 text-gray-700 font-medium">张小明</span>
+              </div>
+              <a href="#" class="text-primary font-medium hover:underline flex items-center">
+                阅读更多 <i class="fa fa-arrow-right ml-1 transition-custom group-hover:translate-x-1"></i>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 文章卡片3 -->
+        <article class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom transform hover:-translate-y-1 group overflow-hidden">
+          <div class="relative overflow-hidden rounded-t-xl">
+            <img src="https://picsum.photos/id/119/600/400" alt="Docker容器化部署" class="w-full h-48 object-cover transition-custom group-hover:scale-105 duration-500">
+            <div class="absolute top-4 left-4 bg-gray-700 text-white text-xs font-medium px-2 py-1 rounded-md">
+              云原生
+            </div>
+            <button class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-gray-500 hover:text-danger transition-custom">
+              <i class="fa fa-heart-o"></i>
+            </button>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center text-gray-500 text-sm mb-3">
+              <span><i class="fa fa-calendar-o mr-1"></i> 2025-11-10</span>
+              <span class="mx-2">•</span>
+              <span><i class="fa fa-eye mr-1"></i> 1.8k</span>
+              <span class="mx-2">•</span>
+              <span><i class="fa fa-comment-o mr-1"></i> 27</span>
+            </div>
+            <h3 class="text-xl font-bold text-dark mb-3 group-hover:text-primary transition-custom">
+              <a href="#">Docker+K8s实战：容器化部署前端应用全流程</a>
+            </h3>
+            <p class="text-gray-600 mb-4 line-clamp-3">
+              详细讲解如何使用Docker打包前端应用，编写优化的Dockerfile，以及如何在Kubernetes集群中部署、伸缩和管理前端应用，包含完整的配置示例...
+            </p>
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <img src="https://picsum.photos/id/64/100/100" alt="作者头像" class="w-10 h-10 rounded-full object-cover">
+                <span class="ml-2 text-gray-700 font-medium">张小明</span>
+              </div>
+              <a href="#" class="text-primary font-medium hover:underline flex items-center">
+                阅读更多 <i class="fa fa-arrow-right ml-1 transition-custom group-hover:translate-x-1"></i>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 文章卡片4 -->
+        <article class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom transform hover:-translate-y-1 group overflow-hidden">
+          <div class="relative overflow-hidden rounded-t-xl">
+            <img src="https://picsum.photos/id/9/600/400" alt="Python数据分析" class="w-full h-48 object-cover transition-custom group-hover:scale-105 duration-500">
+            <div class="absolute top-4 left-4 bg-purple-600 text-white text-xs font-medium px-2 py-1 rounded-md">
+              人工智能
+            </div>
+            <button class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-gray-500 hover:text-danger transition-custom">
+              <i class="fa fa-heart-o"></i>
+            </button>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center text-gray-500 text-sm mb-3">
+              <span><i class="fa fa-calendar-o mr-1"></i> 2025-11-05</span>
+              <span class="mx-2">•</span>
+              <span><i class="fa fa-eye mr-1"></i> 3.2k</span>
+              <span class="mx-2">•</span>
+              <span><i class="fa fa-comment-o mr-1"></i> 64</span>
+            </div>
+            <h3 class="text-xl font-bold text-dark mb-3 group-hover:text-primary transition-custom">
+              <a href="#">Python数据分析实战：Pandas+Matplotlib可视化教程</a>
+            </h3>
+            <p class="text-gray-600 mb-4 line-clamp-3">
+              本文通过实际案例讲解Pandas数据处理和Matplotlib可视化的核心技巧，包括数据清洗、转换、分组统计和专业图表制作，适合数据分析入门者...
+            </p>
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <img src="https://picsum.photos/id/64/100/100" alt="作者头像" class="w-10 h-10 rounded-full object-cover">
+                <span class="ml-2 text-gray-700 font-medium">张小明</span>
+              </div>
+              <a href="#" class="text-primary font-medium hover:underline flex items-center">
+                阅读更多 <i class="fa fa-arrow-right ml-1 transition-custom group-hover:translate-x-1"></i>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 文章卡片5 -->
+        <article class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom transform hover:-translate-y-1 group overflow-hidden">
+          <div class="relative overflow-hidden rounded-t-xl">
+            <img src="https://picsum.photos/id/20/600/400" alt="Vue3组合式API" class="w-full h-48 object-cover transition-custom group-hover:scale-105 duration-500">
+            <div class="absolute top-4 left-4 bg-primary text-white text-xs font-medium px-2 py-1 rounded-md">
+              前端开发
+            </div>
+            <button class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-gray-500 hover:text-danger transition-custom">
+              <i class="fa fa-heart-o"></i>
+            </button>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center text-gray-500 text-sm mb-3">
+              <span><i class="fa fa-calendar-o mr-1"></i> 2025-10-30</span>
+              <span class="mx-2">•</span>
+              <span><i class="fa fa-eye mr-1"></i> 2.1k</span>
+              <span class="mx-2">•</span>
+              <span><i class="fa fa-comment-o mr-1"></i> 38</span>
+            </div>
+            <h3 class="text-xl font-bold text-dark mb-3 group-hover:text-primary transition-custom">
+              <a href="#">Vue3组合式API完全指南：从Options API迁移实践</a>
+            </h3>
+            <p class="text-gray-600 mb-4 line-clamp-3">
+              详细对比Vue2 Options API和Vue3组合式API的差异，讲解setup、ref、reactive等核心API的使用场景，提供完整的迁移步骤和最佳实践...
+            </p>
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <img src="https://picsum.photos/id/64/100/100" alt="作者头像" class="w-10 h-10 rounded-full object-cover">
+                <span class="ml-2 text-gray-700 font-medium">张小明</span>
+              </div>
+              <a href="#" class="text-primary font-medium hover:underline flex items-center">
+                阅读更多 <i class="fa fa-arrow-right ml-1 transition-custom group-hover:translate-x-1"></i>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 文章卡片6 -->
+        <article class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom transform hover:-translate-y-1 group overflow-hidden">
+          <div class="relative overflow-hidden rounded-t-xl">
+            <img src="https://picsum.photos/id/48/600/400" alt="Redis性能优化" class="w-full h-48 object-cover transition-custom group-hover:scale-105 duration-500">
+            <div class="absolute top-4 left-4 bg-secondary text-white text-xs font-medium px-2 py-1 rounded-md">
+              后端开发
+            </div>
+            <button class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-gray-500 hover:text-danger transition-custom">
+              <i class="fa fa-heart-o"></i>
+            </button>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center text-gray-500 text-sm mb-3">
+              <span><i class="fa fa-calendar-o mr-1"></i> 2025-10-25</span>
+              <span class="mx-2">•</span>
+              <span><i class="fa fa-eye mr-1"></i> 1.9k</span>
+              <span class="mx-2">•</span>
+              <span><i class="fa fa-comment-o mr-1"></i> 41</span>
+            </div>
+            <h3 class="text-xl font-bold text-dark mb-3 group-hover:text-primary transition-custom">
+              <a href="#">Redis性能优化实战：缓存策略与集群部署</a>
+            </h3>
+            <p class="text-gray-600 mb-4 line-clamp-3">
+              深入讲解Redis的性能优化技巧，包括缓存穿透、击穿、雪崩的解决方案，数据结构优化，持久化策略选择，以及Redis Cluster集群部署与扩容...
+            </p>
+            <div class="flex justify-between items-center">
+              <div class="flex items-center">
+                <img src="https://picsum.photos/id/64/100/100" alt="作者头像" class="w-10 h-10 rounded-full object-cover">
+                <span class="ml-2 text-gray-700 font-medium">张小明</span>
+              </div>
+              <a href="#" class="text-primary font-medium hover:underline flex items-center">
+                阅读更多 <i class="fa fa-arrow-right ml-1 transition-custom group-hover:translate-x-1"></i>
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="text-center mt-12">
+        <a href="#" class="inline-flex items-center px-6 py-3 border border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-custom">
+          查看更多文章 <i class="fa fa-long-arrow-right ml-2"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 分类与统计区（保持原有结构） -->
+  <section id="categories" class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-dark mb-4">技术分类</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">按技术领域分类浏览文章，快速找到你感兴趣的内容</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        <!-- 分类标签 -->
+        <div class="bg-white rounded-xl shadow-card p-6">
+          <h3 class="text-xl font-bold text-dark mb-6">热门分类</h3>
+          <div class="flex flex-wrap gap-3">
+            <a href="#" class="px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-custom">
+              前端开发 <span class="ml-1 text-sm bg-primary/20 rounded-full px-2 py-0.5">128</span>
+            </a>
+            <a href="#" class="px-4 py-2 bg-secondary/10 text-secondary rounded-lg hover:bg-secondary hover:text-white transition-custom">
+              后端开发 <span class="ml-1 text-sm bg-secondary/20 rounded-full px-2 py-0.5">96</span>
+            </a>
+            <a href="#" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-700 hover:text-white transition-custom">
+              云原生 <span class="ml-1 text-sm bg-gray-200 rounded-full px-2 py-0.5">72</span>
+            </a>
+            <a href="#" class="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-700 hover:text-white transition-custom">
+              人工智能 <span class="ml-1 text-sm bg-purple-200 rounded-full px-2 py-0.5">64</span>
+            </a>
+            <a href="#" class="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-700 hover:text-white transition-custom">
+              数据库 <span class="ml-1 text-sm bg-green-200 rounded-full px-2 py-0.5">58</span>
+            </a>
+            <a href="#" class="px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-700 hover:text-white transition-custom">
+              移动开发 <span class="ml-1 text-sm bg-yellow-200 rounded-full px-2 py-0.5">45</span>
+            </a>
+            <a href="#" class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-700 hover:text-white transition-custom">
+              DevOps <span class="ml-1 text-sm bg-red-200 rounded-full px-2 py-0.5">39</span>
+            </a>
+            <a href="#" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-700 hover:text-white transition-custom">
+              面试技巧 <span class="ml-1 text-sm bg-blue-200 rounded-full px-2 py-0.5">32</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 博客统计 -->
+        <div class="bg-white rounded-xl shadow-card p-6">
+          <h3 class="text-xl font-bold text-dark mb-6">博客统计</h3>
+          <div class="h-64">
+            <canvas id="blogStatsChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- 热门文章 -->
+      <section id="popular" class="mt-16">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-dark mb-4">热门推荐</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">最受读者欢迎的技术文章，干货满满</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- 热门文章1-6 保持原有结构 -->
+          <!-- 热门文章1 -->
+          <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom flex">
+            <img src="https://picsum.photos/id/26/300/200" alt="JavaScript高级技巧" class="w-1/3 h-32 object-cover rounded-l-xl">
+            <div class="w-2/3 p-4">
+              <span class="text-xs text-primary font-medium">前端开发</span>
+              <h3 class="font-bold text-dark mt-1 mb-2 line-clamp-2">
+                <a href="#" class="hover:text-primary transition-custom">JavaScript高级技巧：10个提升代码质量的实用方法</a>
+              </h3>
+              <div class="flex items-center text-gray-500 text-sm">
+                <span><i class="fa fa-eye mr-1"></i> 5.8k</span>
+                <span class="mx-2">•</span>
+                <span><i class="fa fa-comment-o mr-1"></i> 126</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 热门文章2 -->
+          <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom flex">
+            <img src="https://picsum.photos/id/96/300/200" alt="微服务架构设计" class="w-1/3 h-32 object-cover rounded-l-xl">
+            <div class="w-2/3 p-4">
+              <span class="text-xs text-secondary font-medium">后端开发</span>
+              <h3 class="font-bold text-dark mt-1 mb-2 line-clamp-2">
+                <a href="#" class="hover:text-primary transition-custom">微服务架构设计原则与最佳实践</a>
+              </h3>
+              <div class="flex items-center text-gray-500 text-sm">
+                <span><i class="fa fa-eye mr-1"></i> 4.5k</span>
+                <span class="mx-2">•</span>
+                <span><i class="fa fa-comment-o mr-1"></i> 98</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 热门文章3 -->
+          <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom flex">
+            <img src="https://picsum.photos/id/60/300/200" alt="Docker实战教程" class="w-1/3 h-32 object-cover rounded-l-xl">
+            <div class="w-2/3 p-4">
+              <span class="text-xs text-gray-700 font-medium">云原生</span>
+              <h3 class="font-bold text-dark mt-1 mb-2 line-clamp-2">
+                <a href="#" class="hover:text-primary transition-custom">Docker实战：从入门到精通完整教程</a>
+              </h3>
+              <div class="flex items-center text-gray-500 text-sm">
+                <span><i class="fa fa-eye mr-1"></i> 3.9k</span>
+                <span class="mx-2">•</span>
+                <span><i class="fa fa-comment-o mr-1"></i> 76</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 热门文章4 -->
+          <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom flex">
+            <img src="https://picsum.photos/id/13/300/200" alt="Python爬虫实战" class="w-1/3 h-32 object-cover rounded-l-xl">
+            <div class="w-2/3 p-4">
+              <span class="text-xs text-purple-700 font-medium">人工智能</span>
+              <h3 class="font-bold text-dark mt-1 mb-2 line-clamp-2">
+                <a href="#" class="hover:text-primary transition-custom">Python爬虫实战：爬取电商数据并可视化分析</a>
+              </h3>
+              <div class="flex items-center text-gray-500 text-sm">
+                <span><i class="fa fa-eye mr-1"></i> 3.7k</span>
+                <span class="mx-2">•</span>
+                <span><i class="fa fa-comment-o mr-1"></i> 68</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 热门文章5 -->
+          <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom flex">
+            <img src="https://picsum.photos/id/24/300/200" alt="MySQL性能优化" class="w-1/3 h-32 object-cover rounded-l-xl">
+            <div class="w-2/3 p-4">
+              <span class="text-xs text-green-700 font-medium">数据库</span>
+              <h3 class="font-bold text-dark mt-1 mb-2 line-clamp-2">
+                <a href="#" class="hover:text-primary transition-custom">MySQL性能优化：索引设计与查询优化技巧</a>
+              </h3>
+              <div class="flex items-center text-gray-500 text-sm">
+                <span><i class="fa fa-eye mr-1"></i> 3.5k</span>
+                <span class="mx-2">•</span>
+                <span><i class="fa fa-comment-o mr-1"></i> 59</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 热门文章6 -->
+          <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom flex">
+            <img src="https://picsum.photos/id/42/300/200" alt="React面试题" class="w-1/3 h-32 object-cover rounded-l-xl">
+            <div class="w-2/3 p-4">
+              <span class="text-xs text-blue-700 font-medium">面试技巧</span>
+              <h3 class="font-bold text-dark mt-1 mb-2 line-clamp-2">
+                <a href="#" class="hover:text-primary transition-custom">React面试高频题：原理与实践解析</a>
+              </h3>
+              <div class="flex items-center text-gray-500 text-sm">
+                <span><i class="fa fa-eye mr-1"></i> 3.2k</span>
+                <span class="mx-2">•</span>
+                <span><i class="fa fa-comment-o mr-1"></i> 47</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- 关于博主（保持原有结构） -->
+  <section id="about" class="py-16 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center gap-12">
+        <div class="md:w-1/3">
+          <div class="relative">
+            <img src="https://picsum.photos/id/64/400/400" alt="博主头像" class="w-64 h-64 rounded-full object-cover border-8 border-primary/10 shadow-xl">
+            <div class="absolute -bottom-4 -right-4 bg-primary text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl shadow-lg">
+              <i class="fa fa-code"></i>
+            </div>
+          </div>
+        </div>
+        <div class="md:w-2/3">
+          <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-dark mb-4">关于博主</h2>
+          <p class="text-gray-600 text-lg mb-6">
+            大家好！我是张小明，一名拥有8年开发经验的全栈工程师，目前专注于云原生和人工智能领域。热爱技术分享，相信"分享创造价值"。
+          </p>
+          <p class="text-gray-600 text-lg mb-8">
+            曾任职于多家知名互联网公司，参与过多个大型项目的设计与开发。现在致力于通过技术博客分享实战经验、踩坑总结和前沿技术，帮助更多开发者少走弯路，快速成长。
+          </p>
+          
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            <div class="text-center">
+              <div class="text-3xl font-bold text-primary mb-1">8+</div>
+              <div class="text-gray-600 text-sm">开发年限</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-bold text-primary mb-1">420+</div>
+              <div class="text-gray-600 text-sm">原创文章</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-bold text-primary mb-1">120k+</div>
+              <div class="text-gray-600 text-sm">阅读量</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-bold text-primary mb-1">50+</div>
+              <div class="text-gray-600 text-sm">技术分享</div>
+            </div>
+          </div>
+          
+          <div class="flex flex-wrap gap-4">
+            <a href="#" class="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-custom flex items-center">
+              <i class="fa fa-github mr-2"></i> GitHub
+            </a>
+            <a href="#" class="px-4 py-2 bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-700 transition-custom flex items-center">
+              <i class="fa fa-envelope mr-2"></i> 联系我
+            </a>
+            <a href="#" class="px-4 py-2 bg-white text-primary border border-primary rounded-lg font-medium hover:bg-primary/5 transition-custom flex items-center">
+              <i class="fa fa-book mr-2"></i> 作品集
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 订阅区（优化了表单样式） -->
+  <section class="py-16 bg-primary/5">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 bg-secondary/5 rounded-full -ml-24 -mb-24"></div>
+        
+        <div class="relative z-10 text-center">
+          <h2 class="text-2xl md:text-3xl font-bold text-dark mb-4">订阅我的技术周刊</h2>
+          <p class="text-gray-600 mb-8">每周收到最新的技术文章、教程和行业动态，不打扰，可随时取消</p>
+          
+          <form class="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
+            <input type="email" placeholder="输入你的邮箱地址" class="flex-1 px-4 py-3 rounded-lg border border-gray-200 input-focus">
+            <button type="submit" class="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-custom whitespace-nowrap shadow-md hover:shadow-lg">
+              立即订阅
+            </button>
+          </form>
+          
+          <p class="text-gray-400 text-sm mt-4">我们尊重你的隐私，不会向第三方泄露你的信息</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚（保持原有结构） -->
+  <footer class="bg-dark text-white pt-16 pb-8">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div>
+          <div class="flex items-center space-x-2 mb-6">
+            <span class="text-primary text-2xl"><i class="fa fa-code"></i></span>
+            <span class="font-bold text-xl">TechBlog</span>
+          </div>
+          <p class="text-gray-400 mb-6">
+            分享技术，记录成长。专注于前端、后端、云原生和人工智能的技术博客。
+          </p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-primary transition-custom">
+              <i class="fa fa-github text-xl"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-primary transition-custom">
+              <i class="fa fa-twitter text-xl"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-primary transition-custom">
+              <i class="fa fa-linkedin text-xl"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-primary transition-custom">
+              <i class="fa fa-weixin text-xl"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-bold mb-6">快速链接</h3>
+          <ul class="space-y-3">
+            <li><a href="#home" class="text-gray-400 hover:text-white transition-custom">首页</a></li>
+            <li><a href="#articles" class="text-gray-400 hover:text-white transition-custom">文章列表</a></li>
+            <li><a href="#categories" class="text-gray-400 hover:text-white transition-custom">技术分类</a></li>
+            <li><a href="#popular" class="text-gray-400 hover:text-white transition-custom">热门推荐</a></li>
+            <li><a href="#about" class="text-gray-400 hover:text-white transition-custom">关于我</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-bold mb-6">技术分类</h3>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">前端开发</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">后端开发</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">云原生</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">人工智能</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">数据库</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-bold mb-6">联系我</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start">
+              <i class="fa fa-envelope-o text-primary mt-1 mr-3"></i>
+              <span class="text-gray-400">xiaoming@techblog.com</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fa fa-phone text-primary mt-1 mr-3"></i>
+              <span class="text-gray-400">+86 138 **** 8888</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fa fa-map-marker text-primary mt-1 mr-3"></i>
+              <span class="text-gray-400">北京市朝阳区科技园区88号</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-800 pt-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-500 text-sm mb-4 md:mb-0">
+            &copy; 2025 TechBlog. 保留所有权利。
+          </p>
+          <div class="flex space-x-6">
+            <a href="#" class="text-gray-500 hover:text-gray-400 text-sm transition-custom">隐私政策</a>
+            <a href="#" class="text-gray-500 hover:text-gray-400 text-sm transition-custom">使用条款</a>
+            <a href="#" class="text-gray-500 hover:text-gray-400 text-sm transition-custom">网站地图</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 回到顶部按钮 -->
+  <button id="back-to-top" class="fixed bottom-6 right-6 bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-custom hover:bg-primary/90">
+    <i class="fa fa-arrow-up"></i>
+  </button>
+
+  <!-- 注册模态框 -->
+  <div id="register-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="modal-overlay"></div>
+    <div class="relative bg-white rounded-2xl shadow-modal w-full max-w-md p-6 modal-enter">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold text-dark">用户注册</h3>
+        <button id="close-register-modal" class="text-gray-500 hover:text-gray-700 transition-custom">
+          <i class="fa fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <form id="register-form" class="space-y-4">
+        <div>
+          <label for="username" class="block text-gray-700 font-medium mb-1">用户名</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <i class="fa fa-user"></i>
+            </span>
+            <input type="text" id="username" name="username" placeholder="请输入用户名（3-20字符）" 
+                  class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 input-focus">
+            <span class="hidden absolute right-3 top-1/2 transform -translate-y-1/2 text-success" id="username-success">
+              <i class="fa fa-check"></i>
+            </span>
+            <span class="hidden absolute right-3 top-1/2 transform -translate-y-1/2 text-danger" id="username-error">
+              <i class="fa fa-exclamation-circle"></i>
+            </span>
+          </div>
+          <p class="hidden text-danger text-sm mt-1" id="username-message"></p>
+        </div>
+        
+        <div>
+          <label for="email" class="block text-gray-700 font-medium mb-1">邮箱地址</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <i class="fa fa-envelope"></i>
+            </span>
+            <input type="email" id="email" name="email" placeholder="请输入你的邮箱" 
+                  class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 input-focus">
+            <span class="hidden absolute right-3 top-1/2 transform -translate-y-1/2 text-success" id="email-success">
+              <i class="fa fa-check"></i>
+            </span>
+            <span class="hidden absolute right-3 top-1/2 transform -translate-y-1/2 text-danger" id="email-error">
+              <i class="fa fa-exclamation-circle"></i>
+            </span>
+          </div>
+          <p class="hidden text-danger text-sm mt-1" id="email-message"></p>
+        </div>
+        
+        <div>
+          <label for="password" class="block text-gray-700 font-medium mb-1">设置密码</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <i class="fa fa-lock"></i>
+            </span>
+            <input type="password" id="password" name="password" placeholder="请输入密码（6-20字符）" 
+                  class="w-full pl-10 pr-10 py-3 rounded-lg border border-gray-200 input-focus">
+            <button type="button" id="toggle-password" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-custom">
+              <i class="fa fa-eye-slash"></i>
+            </button>
+          </div>
+          <p class="hidden text-danger text-sm mt-1" id="password-message"></p>
+        </div>
+        
+        <div>
+          <label for="confirm-password" class="block text-gray-700 font-medium mb-1">确认密码</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <i class="fa fa-lock"></i>
+            </span>
+            <input type="password" id="confirm-password" name="confirm-password" placeholder="请再次输入密码" 
+                  class="w-full pl-10 pr-10 py-3 rounded-lg border border-gray-200 input-focus">
+            <button type="button" id="toggle-confirm-password" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-custom">
+              <i class="fa fa-eye-slash"></i>
+            </button>
+          </div>
+          <p class="hidden text-danger text-sm mt-1" id="confirm-password-message"></p>
+        </div>
+        
+        <div class="flex items-start">
+          <input type="checkbox" id="agreement" name="agreement" class="mt-1 mr-2">
+          <label for="agreement" class="text-gray-600 text-sm">
+            我已阅读并同意<a href="#" class="text-primary hover:underline">用户协议</a>和<a href="#" class="text-primary hover:underline">隐私政策</a>
+          </label>
+        </div>
+        
+        <button type="submit" class="w-full py-3 btn-primary">
+          注册账号
+        </button>
+        
+        <div class="text-center text-gray-600 text-sm">
+          已有账号？<a href="#login-modal" id="go-to-login" class="text-primary hover:underline">立即登录</a>
+        </div>
+        
+        <div class="relative my-4">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-200"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white text-gray-500">其他注册方式</span>
+          </div>
+        </div>
+        
+        <div class="flex justify-center space-x-4">
+          <a href="#" class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200 transition-custom">
+            <i class="fa fa-github text-xl"></i>
+          </a>
+          <a href="#" class="w-12 h-12 rounded-full bg-[#EA4335] flex items-center justify-center text-white hover:bg-[#D93025] transition-custom">
+            <i class="fa fa-google text-xl"></i>
+          </a>
+          <a href="#" class="w-12 h-12 rounded-full bg-[#1DA1F2] flex items-center justify-center text-white hover:bg-[#1A91DA] transition-custom">
+            <i class="fa fa-twitter text-xl"></i>
+          </a>
+          <a href="#" class="w-12 h-12 rounded-full bg-[#07C160] flex items-center justify-center text-white hover:bg-[#05AE54] transition-custom">
+            <i class="fa fa-weixin text-xl"></i>
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 登录模态框 -->
+  <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="login-overlay"></div>
+    <div class="relative bg-white rounded-2xl shadow-modal w-full max-w-md p-6 modal-enter">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold text-dark">用户登录</h3>
+        <button id="close-login-modal" class="text-gray-500 hover:text-gray-700 transition-custom">
+          <i class="fa fa-times text-xl"></i>
+        </button>
+      </div>
+      
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label for="login-account" class="block text-gray-700 font-medium mb-1">账号</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <i class="fa fa-user"></i>
+            </span>
+            <input type="text" id="login-account" name="login-account" placeholder="用户名或邮箱" 
+                  class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 input-focus">
+          </div>
+        </div>
+        
+        <div>
+          <label for="login-password" class="block text-gray-700 font-medium mb-1">密码</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <i class="fa fa-lock"></i>
+            </span>
+            <input type="password" id="login-password" name="login-password" placeholder="请输入密码" 
+                  class="w-full pl-10 pr-10 py-3 rounded-lg border border-gray-200 input-focus">
+            <button type="button" id="toggle-login-password" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-custom">
+              <i class="fa fa-eye-slash"></i>
+            </button>
+          </div>
+          <div class="flex justify-end mt-1">
+            <a href="#" class="text-primary text-sm hover:underline">忘记密码？</a>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <input type="checkbox" id="remember-me" name="remember-me" class="mr-2">
+            <label for="remember-me" class="text-gray-600 text-sm">记住我</label>
+          </div>
+          <button type="submit" class="px-6 py-2 btn-primary">
+            登录
+          </button>
+        </div>
+        
+        <div class="text-center text-gray-600 text-sm">
+          没有账号？<a href="#register-modal" id="go-to-register" class="text-primary hover:underline">立即注册</a>
+        </div>
+        
+        <div class="relative my-4">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-200"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white text-gray-500">其他登录方式</span>
+          </div>
+        </div>
+        
+        <div class="flex justify-center space-x-4">
+          <a href="#" class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200 transition-custom">
+            <i class="fa fa-github text-xl"></i>
+          </a>
+          <a href="#" class="w-12 h-12 rounded-full bg-[#EA4335] flex items-center justify-center text-white hover:bg-[#D93025] transition-custom">
+            <i class="fa fa-google text-xl"></i>
+          </a>
+          <a href="#" class="w-12 h-12 rounded-full bg-[#1DA1F2] flex items-center justify-center text-white hover:bg-[#1A91DA] transition-custom">
+            <i class="fa fa-twitter text-xl"></i>
+          </a>
+          <a href="#" class="w-12 h-12 rounded-full bg-[#07C160] flex items-center justify-center text-white hover:bg-[#05AE54] transition-custom">
+            <i class="fa fa-weixin text-xl"></i>
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 注册成功模态框 -->
+  <div id="success-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="success-overlay"></div>
+    <div class="relative bg-white rounded-2xl shadow-modal w-full max-w-md p-6 modal-enter text-center">
+      <div class="w-16 h-16 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fa fa-check text-2xl text-success"></i>
+      </div>
+      <h3 class="text-xl font-bold text-dark mb-2">注册成功！</h3>
+      <p class="text-gray-600 mb-6">你的账号已成功创建，现在可以享受更多会员功能</p>
+      <div class="flex flex-col space-y-3">
+        <a href="#login-modal" id="success-login" class="py-3 btn-primary">
+          立即登录
+        </a>
+        <button id="close-success-modal" class="py-3 btn-outline">
+          稍后登录
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // 移动端菜单切换
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    menuToggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // 导航栏滚动效果
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('shadow-md');
+        navbar.classList.remove('shadow-sm');
+      } else {
+        navbar.classList.remove('shadow-md');
+        navbar.classList.add('shadow-sm');
+      }
+    });
+
+    // 回到顶部按钮
+    const backToTop = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        backToTop.classList.remove('opacity-0', 'invisible');
+        backToTop.classList.add('opacity-100', 'visible');
+      } else {
+        backToTop.classList.add('opacity-0', 'invisible');
+        backToTop.classList.remove('opacity-100', 'visible');
+      }
+    });
+
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    // 博客统计图表
+    window.addEventListener('load', () => {
+      const ctx = document.getElementById('blogStatsChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['前端开发', '后端开发', '云原生', '人工智能', '数据库', '其他'],
+          datasets: [{
+            data: [128, 96, 72, 64, 58, 82],
+            backgroundColor: [
+              '#165DFF',
+              '#36CFC9',
+              '#374151',
+              '#9333EA',
+              '#22C55E',
+              '#F59E0B'
+            ],
+            borderWidth: 0,
+            borderRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                padding: 20,
+                font: {
+                  size: 12
+                }
+              }
+            }
+          },
+          cutout: '65%'
+        }
+      });
+    });
+
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        // 关闭移动端菜单
+        if (!mobileMenu.classList.contains('hidden')) {
+          mobileMenu.classList.add('hidden');
+        }
+        
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    // 模态框相关元素
+    const registerModal = document.getElementById('register-modal');
+    const loginModal = document.getElementById('login-modal');
+    const successModal = document.getElementById('success-modal');
+    
+    const registerBtns = [
+      document.getElementById('register-btn'),
+      document.getElementById('mobile-register-btn'),
+      document.getElementById('hero-register-btn')
+    ];
+    const loginBtns = [
+      document.getElementById('login-btn'),
+      document.getElementById('mobile-login-btn')
+    ];
+    
+    const closeRegisterModal = document.getElementById('close-register-modal');
+    const closeLoginModal = document.getElementById('close-login-modal');
+    const closeSuccessModal = document.getElementById('close-success-modal');
+    const successLogin = document.getElementById('success-login');
+    
+    const modalOverlays = [
+      document.getElementById('modal-overlay'),
+      document.getElementById('login-overlay'),
+      document.getElementById('success-overlay')
+    ];
+    
+    const goToLogin = document.getElementById('go-to-login');
+    const goToRegister = document.getElementById('go-to-register');
+
+    // 打开注册模态框
+    registerBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        registerModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    // 打开登录模态框
+    loginBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        loginModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    // 关闭模态框
+    const closeModal = (modal) => {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    };
+
+    closeRegisterModal.addEventListener('click', () => closeModal(registerModal));
+    closeLoginModal.addEventListener('click', () => closeModal(loginModal));
+    closeSuccessModal.addEventListener('click', () => closeModal(successModal));
+
+    // 点击遮罩层关闭模态框
+    modalOverlays.forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          if (!registerModal.classList.contains('hidden')) closeModal(registerModal);
+          if (!loginModal.classList.contains('hidden')) closeModal(loginModal);
+          if (!successModal.classList.contains('hidden')) closeModal(successModal);
+        }
+      });
+    });
+
+    // 切换模态框
+    goToLogin.addEventListener('click', () => {
+      registerModal.classList.add('hidden');
+      loginModal.classList.remove('hidden');
+    });
+
+    goToRegister.addEventListener('click', () => {
+      loginModal.classList.add('hidden');
+      registerModal.classList.remove('hidden');
+    });
+
+    successLogin.addEventListener('click', () => {
+      successModal.classList.add('hidden');
+      loginModal.classList.remove('hidden');
+    });
+
+    // 密码显示/隐藏切换
+    const togglePassword = (toggleBtn, passwordInput) => {
+      toggleBtn.addEventListener('click', () => {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        // 切换图标
+        const icon = toggleBtn.querySelector('i');
+        if (type === 'text') {
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+        } else {
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+        }
+      });
+    };
+
+    togglePassword(
+      document.getElementById('toggle-password'),
+      document.getElementById('password')
+    );
+
+    togglePassword(
+      document.getElementById('toggle-confirm-password'),
+      document.getElementById('confirm-password')
+    );
+
+    togglePassword(
+      document.getElementById('toggle-login-password'),
+      document.getElementById('login-password')
+    );
+
+    // 表单验证
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    const agreementInput = document.getElementById('agreement');
+    
+    const usernameSuccess = document.getElementById('username-success');
+    const usernameError = document.getElementById('username-error');
+    const usernameMessage = document.getElementById('username-message');
+    
+    const emailSuccess = document.getElementById('email-success');
+    const emailError = document.getElementById('email-error');
+    const emailMessage = document.getElementById('email-message');
+    
+    const passwordMessage = document.getElementById('password-message');
+    const confirmPasswordMessage = document.getElementById('confirm-password-message');
+
+    // 用户名验证
+    usernameInput.addEventListener('input', () => {
+      const username = usernameInput.value.trim();
+      
+      if (username.length < 3) {
+        showError(usernameInput, usernameError, usernameMessage, '用户名至少3个字符');
+      } else if (username.length > 20) {
+        showError(usernameInput, usernameError, usernameMessage, '用户名最多20个字符');
+      } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        showError(usernameInput, usernameError, usernameMessage, '用户名只能包含字母、数字和下划线');
+      } else {
+        showSuccess(usernameInput, usernameSuccess, usernameError, usernameMessage);
+      }
+    });
+
+    // 邮箱验证
+    emailInput.addEventListener('input', () => {
+      const email = emailInput.value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      
+      if (!email) {
+        showError(emailInput, emailError, emailMessage, '请输入邮箱地址');
+      } else if (!emailRegex.test(email)) {
+        showError(emailInput, emailError, emailMessage, '请输入有效的邮箱地址');
+      } else {
+        showSuccess(emailInput, emailSuccess, emailError, emailMessage);
+      }
+    });
+
+    // 密码验证
+    passwordInput.addEventListener('input', () => {
+      const password = passwordInput.value;
+      
+      if (password.length < 6) {
+        showError(passwordInput, null, passwordMessage, '密码至少6个字符');
+      } else if (password.length > 20) {
+        showError(passwordInput, null, passwordMessage, '密码最多20个字符');
+      } else if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(password)) {
+        showError(passwordInput, null, passwordMessage, '密码需包含字母和数字');
+      } else {
+        hideMessage(passwordMessage);
+        passwordInput.classList.remove('border-danger');
+        passwordInput.classList.add('border-success');
+      }
+      
+      // 同步验证确认密码
+      if (confirmPasswordInput.value.trim()) {
+        confirmPasswordInput.dispatchEvent(new Event('input'));
+      }
+    });
+
+    // 确认密码验证
+    confirmPasswordInput.addEventListener('input', () => {
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+      
+      if (confirmPassword !== password) {
+        showError(confirmPasswordInput, null, confirmPasswordMessage, '两次输入的密码不一致');
+      } else {
+        hideMessage(confirmPasswordMessage);
+        confirmPasswordInput.classList.remove('border-danger');
+        confirmPasswordInput.classList.add('border-success');
+      }
+    });
+
+    // 显示错误状态
+    function showError(input, errorIcon, messageElement, message) {
+      input.classList.remove('border-success');
+      input.classList.add('border-danger');
+      
+      if (errorIcon) {
+        errorIcon.classList.remove('hidden');
+      }
+      
+      if (messageElement) {
+        messageElement.textContent = message;
+        messageElement.classList.remove('hidden');
+      }
+      
+      // 添加抖动动画
+      input.classList.add('shake');
+      setTimeout(() => {
+        input.classList.remove('shake');
+      }, 300);
+    }
+
+    // 显示成功状态
+    function showSuccess(input, successIcon, errorIcon, messageElement) {
+      input.classList.remove('border-danger');
+      input.classList.add('border-success');
+      
+      if (successIcon) {
+        successIcon.classList.remove('hidden');
+      }
+      
+      if (errorIcon) {
+        errorIcon.classList.add('hidden');
+      }
+      
+      if (messageElement) {
+        messageElement.classList.add('hidden');
+      }
+    }
+
+    // 隐藏提示信息
+    function hideMessage(messageElement) {
+      if (messageElement) {
+        messageElement.classList.add('hidden');
+      }
+    }
+
+    // 注册表单提交
+    const registerForm = document.getElementById('register-form');
+    registerForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // 手动触发验证
+      usernameInput.dispatchEvent(new Event('input'));
+      emailInput.dispatchEvent(new Event('input'));
+      passwordInput.dispatchEvent(new Event('input'));
+      confirmPasswordInput.dispatchEvent(new Event('input'));
+      
+      // 检查所有字段是否有效
+      const isUsernameValid = usernameInput.classList.contains('border-success');
+      const isEmailValid = emailInput.classList.contains('border-success');
+      const isPasswordValid = passwordInput.classList.contains('border-success');
+      const isConfirmPasswordValid = confirmPasswordInput.classList.contains('border-success');
+      const isAgreementChecked = agreementInput.checked;
+      
+      if (!isAgreementChecked) {
+        alert('请阅读并同意用户协议和隐私政策');
+        return;
+      }
+      
+      // 所有验证通过
+      if (isUsernameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid && isAgreementChecked) {
+        // 模拟注册请求
+        setTimeout(() => {
+          registerModal.classList.add('hidden');
+          successModal.classList.remove('hidden');
+          
+          // 重置表单
+          registerForm.reset();
+          [usernameInput, emailInput, passwordInput, confirmPasswordInput].forEach(input => {
+            input.classList.remove('border-success', 'border-danger');
+          });
+          [usernameSuccess, usernameError, emailSuccess, emailError].forEach(icon => {
+            if (icon) icon.classList.add('hidden');
+          });
+          [usernameMessage, emailMessage, passwordMessage, confirmPasswordMessage].forEach(msg => {
+            if (msg) msg.classList.add('hidden');
+          });
+        }, 1000);
+      } else {
+        alert('请检查表单填写是否正确');
+      }
+    });
+
+    // 登录表单提交
+    const loginForm = document.getElementById('login-form');
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const account = document.getElementById('login-account').value.trim();
+      const password = document.getElementById('login-password').value.trim();
+      
+      if (!account || !password) {
+        alert('请输入账号和密码');
+        return;
+      }
+      
+      // 模拟登录请求
+      setTimeout(() => {
+        loginModal.classList.add('hidden');
+        
+        // 切换到登录状态
+        document.getElementById('user-menu').classList.remove('hidden');
+        loginBtns.forEach(btn => {
+          btn.classList.add('hidden');
+        });
+        registerBtns.forEach(btn => {
+          btn.classList.add('hidden');
+        });
+        
+        alert('登录成功！');
+      }, 1000);
+    });
+
+    // 退出登录
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      // 切换到未登录状态
+      document.getElementById('user-menu').classList.add('hidden');
+      loginBtns.forEach(btn => {
+        btn.classList.remove('hidden');
+      });
+      registerBtns.forEach(btn => {
+        btn.classList.remove('hidden');
+      });
+      
+      alert('退出登录成功！');
+    });
+
+    // 收藏按钮功能
+    document.querySelectorAll('.fa-heart-o').forEach(heart => {
+      heart.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const icon = e.currentTarget;
+        
+        if (document.getElementById('user-menu').classList.contains('hidden')) {
+          // 未登录，提示登录
+          alert('请先登录后再收藏');
+          loginModal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+        } else {
+          // 已登录，切换收藏状态
+          if (icon.classList.contains('fa-heart-o')) {
+            icon.classList.remove('fa-heart-o');
+            icon.classList.add('fa-heart');
+            icon.parentElement.classList.remove('text-gray-500');
+            icon.parentElement.classList.add('text-danger');
+          } else {
+            icon.classList.remove('fa-heart');
+            icon.classList.add('fa-heart-o');
+            icon.parentElement.classList.remove('text-danger');
+            icon.parentElement.classList.add('text-gray-500');
+          }
+        }
+      });
+    });
+  </script>
+  <script>
+    (function(){
+      const API_BASE = (document.querySelector('meta[name="api-base"]')||{}).content || '';
+      const statusEl = document.getElementById('backend-status');
+      const dot = document.getElementById('backend-dot');
+      const rpStatus = document.getElementById('remote-products-status');
+      const rpList = document.getElementById('remote-products-list');
+
+      function timeout(ms){ return new Promise(res=>setTimeout(res, ms)); }
+
+      async function fetchWithTimeout(url, opts={}, t=6000){
+        return Promise.race([
+          fetch(url, opts),
+          new Promise((_, rej) => setTimeout(()=>rej(new Error('timeout')), t))
+        ]);
+      }
+
+      function setStatus(state, txt){
+        if(!dot || !statusEl) return;
+        if(state === 'up'){
+          dot.className = 'w-2 h-2 rounded-full bg-green-400 inline-block mr-2';
+          statusEl.innerText = '后端：正常';
+        } else if(state === 'down'){
+          dot.className = 'w-2 h-2 rounded-full bg-red-500 inline-block mr-2';
+          statusEl.innerText = '后端：不可用';
+        } else {
+          dot.className = 'w-2 h-2 rounded-full bg-yellow-400 inline-block mr-2';
+          statusEl.innerText = txt || '后端：未知';
+        }
+      }
+
+      async function checkHealth(retries=3){
+        if(!API_BASE){ setStatus('down'); if(rpStatus) rpStatus.innerText='未配置 API 地址'; return false; }
+        try{
+          const res = await fetchWithTimeout(API_BASE + '/health', {}, 4000);
+          if(res.ok){ setStatus('up'); return true; }
+        }catch(e){ /* ignore */ }
+        if(retries>0){ await timeout(1000); return checkHealth(retries-1); }
+        setStatus('down'); return false;
+      }
+
+      async function loadProducts(){
+        if(!rpList) return;
+        rpStatus && (rpStatus.textContent = '加载中...');
+        try{
+          const res = await fetchWithTimeout(API_BASE + '/api/products', {}, 7000);
+          if(!res.ok){ rpStatus && (rpStatus.textContent = '拉取失败: ' + res.status); return; }
+          const json = await res.json();
+          const items = Array.isArray(json) ? json : (json.data || json.products || []);
+          rpStatus && (rpStatus.textContent = '共 ' + (items.length||0) + ' 件');
+          renderProducts(items);
+        }catch(err){ rpStatus && (rpStatus.textContent = '加载失败'); }
+      }
+
+      function renderProducts(items){
+        rpList.innerHTML = '';
+        if(!items || items.length === 0){ rpList.innerHTML = '<p class="text-gray-500">未发现产品。</p>'; return; }
+        items.slice(0,9).forEach(p => {
+          const card = document.createElement('div');
+          card.className = 'bg-white p-4 rounded-lg shadow-card';
+          const title = p.name || p.title || '未命名产品';
+          const img = p.image_url || p.image || ('https://picsum.photos/seed/' + encodeURIComponent(title) + '/600/400');
+          const desc = p.description || p.summary || '';
+          const price = p.price ? ('¥' + p.price) : '';
+          card.innerHTML = `
+            <img src="${img}" alt="${title}" class="w-full h-40 object-cover rounded-md mb-3" loading="lazy">
+            <h3 class="font-medium text-dark mb-1">${title}</h3>
+            <p class="text-sm text-gray-500 mb-2">${desc}</p>
+            <div class="flex items-center justify-between">
+              <div class="text-primary font-medium">${price}</div>
+              <a href="#" class="text-sm text-primary hover:underline">查看</a>
+            </div>
+          `;
+          rpList.appendChild(card);
+        });
+      }
+
+      // Contact widget
+      function createContactWidget(){
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = `
+          <div id="contact-widget" class="fixed right-6 bottom-6 z-50">
+            <button id="contact-open" class="btn-primary px-4 py-2 rounded-full shadow-lg">联系我们</button>
+            <div id="contact-panel" class="hidden mt-3 w-80 bg-white rounded-lg p-4 shadow-modal">
+              <h4 class="font-medium mb-2">发送消息</h4>
+              <input id="cw-name" class="w-full mb-2 px-3 py-2 border rounded" placeholder="姓名" />
+              <input id="cw-email" class="w-full mb-2 px-3 py-2 border rounded" placeholder="邮箱" />
+              <input id="cw-subject" class="w-full mb-2 px-3 py-2 border rounded" placeholder="主题" />
+              <textarea id="cw-message" class="w-full mb-2 px-3 py-2 border rounded" rows="3" placeholder="留言"></textarea>
+              <div class="flex justify-between items-center">
+                <div id="cw-status" class="text-sm text-gray-500"></div>
+                <div>
+                  <button id="cw-send" class="btn-primary px-3 py-1 mr-2">发送</button>
+                  <button id="cw-close" class="btn-outline px-3 py-1">关闭</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(wrapper);
+        const open = document.getElementById('contact-open');
+        const panel = document.getElementById('contact-panel');
+        const close = document.getElementById('cw-close');
+        const send = document.getElementById('cw-send');
+        const status = document.getElementById('cw-status');
+
+        open && open.addEventListener('click', ()=>{ panel.classList.toggle('hidden'); });
+        close && close.addEventListener('click', ()=>{ panel.classList.add('hidden'); });
+
+        send && send.addEventListener('click', async ()=>{
+          const name = document.getElementById('cw-name').value.trim();
+          const email = document.getElementById('cw-email').value.trim();
+          const subject = document.getElementById('cw-subject').value.trim();
+          const message = document.getElementById('cw-message').value.trim();
+          if(!name || !email || !message){ status.textContent = '请填写姓名、邮箱与留言'; return; }
+          status.textContent = '发送中...';
+          try{
+            const res = await fetchWithTimeout(API_BASE + '/api/contacts', {
+              method: 'POST', headers: {'Content-Type':'application/json'},
+              body: JSON.stringify({ name, email, subject, message })
+            }, 8000);
+            const j = await res.json();
+            if(res.ok && j && j.success){ status.textContent = '发送成功，感谢！'; setTimeout(()=>{ panel.classList.add('hidden'); status.textContent=''; }, 1500); }
+            else { status.textContent = (j && j.message) || '发送失败'; }
+          }catch(err){ status.textContent = '发送失败（网络或超时）'; }
+        });
+      }
+
+      // Run handshake and actions
+      (async function(){
+        setStatus('unknown','检测中...');
+        const ok = await checkHealth(2);
+        if(ok) await loadProducts();
+        createContactWidget();
+      })();
+    })();
+  </script>
+</body>
+</html>
