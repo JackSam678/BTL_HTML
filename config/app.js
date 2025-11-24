@@ -27,25 +27,31 @@ app.get('/', (req, res) => {
 app.use('/api/contacts', require('./routes/contactRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 
-const server = app.listen(PORT, () => {
-  console.log(`🚀 服务器运行在 http://localhost:${PORT}`);
-  testDbConnection();
-});
-
-// Graceful shutdown
-async function shutdown(signal) {
-  console.log(`收到 ${signal}，正在优雅关闭...`);
-  server.close(async (err) => {
-    if (err) {
-      console.error('关闭服务器出错:', err);
+// Export app so tests can require it without starting a server
+// If this file is run directly (node config/app.js), start the server.
+if (require.main === module) {
+  const http = require('http');
+  const server = http.createServer(app);
+  server.listen(PORT, async () => {
+    try {
+      await testDbConnection();
+      console.log(`🚀 服务器运行在 http://localhost:${PORT}`);
+    } catch (err) {
+      console.error('数据库连接失败，服务器将退出', err);
       process.exit(1);
     }
-    await closePool();
-    console.log('已优雅关闭');
-    process.exit(0);
   });
+
+  const graceful = async () => {
+    console.log('收到停止信号，正在优雅关闭...');
+    server.close(() => {
+      closePool().then(() => process.exit(0)).catch(() => process.exit(0));
+    });
+  };
+
+  process.on('SIGINT', graceful);
+  process.on('SIGTERM', graceful);
 }
 
-process.on('SIGINT', () => shutdown('SIGINT'));
-process.on('SIGTERM', () => shutdown('SIGTERM'));
+module.exports = app;
 

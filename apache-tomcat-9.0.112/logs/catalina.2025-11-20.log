@@ -105,3 +105,8 @@
 20-Nov-2025 17:11:00.593 信息 [main] org.apache.catalina.startup.HostConfig.deployDirectory Web应用程序目录[/home/btl/桌面/BTL_HTML/apache-tomcat-9.0.112/webapps/docs]的部署已在[11]毫秒内完成
 20-Nov-2025 17:11:00.596 信息 [main] org.apache.coyote.AbstractProtocol.start 开始协议处理句柄["http-nio-8080"]
 20-Nov-2025 17:11:00.601 信息 [main] org.apache.catalina.startup.Catalina.start [313]毫秒后服务器启动
+20-Nov-2025 17:55:51.096 信息 [main] org.apache.catalina.core.StandardServer.await 通过关闭端口接收到有效的关闭命令。正在停止服务器实例。
+20-Nov-2025 17:55:51.097 信息 [main] org.apache.coyote.AbstractProtocol.pause 暂停ProtocolHandler["http-nio-8080"]
+20-Nov-2025 17:55:51.098 信息 [main] org.apache.catalina.core.StandardService.stopInternal 正在停止服务[Catalina]
+20-Nov-2025 17:55:51.112 信息 [main] org.apache.coyote.AbstractProtocol.stop 正在停止ProtocolHandler ["http-nio-8080"]
+20-Nov-2025 17:55:51.121 信息 [main] org.apache.coyote.AbstractProtocol.destroy 正在销毁协议处理器 ["http-nio-8080"]

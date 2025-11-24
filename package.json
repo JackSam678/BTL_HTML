@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "config/app.js",
   "scripts": {
-    "start": "node config/app.js",
-    "dev": "nodemon config/app.js",
+    "start": "node config/server.js",
+    "dev": "nodemon config/server.js",
     "test": "mocha --exit",
     "test:quick": "node test/run_contacts_tests.js"
   },
@@ -16,6 +16,9 @@
   },
   "devDependencies": {
     "express-validator": "^7.3.1",
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.11",
+    "mocha": "^10.2.0",
+  "supertest": "^6.3.3",
+    "chai": "^4.3.7"
   }
 }
