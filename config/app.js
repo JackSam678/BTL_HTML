@@ -25,7 +25,9 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/api/contacts', require('./routes/contactRoutes'));
-app.use('/api/products', require('./routes/productRoutes'));
+// Products endpoints disabled: productRoutes removed from API to stop realtime product module
+// If you need to re-enable, uncomment the following line:
+// app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 
 // Export app so tests can require it without starting a server

@@ -16,4 +16,7 @@ router.get('/', adminAuth, userController.listUsers);
 // 更新用户（仅管理员可用）
 router.patch('/:id', adminAuth, userController.updateUser);
 
+// 删除用户（仅管理员可用）
+router.delete('/:id', adminAuth, userController.deleteUser);
+
 module.exports = router;

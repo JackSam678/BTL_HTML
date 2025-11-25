@@ -113,3 +113,18 @@ exports.listUsers = async (req, res) => {
     res.status(500).json({ success: false, message: '服务器错误' });
   }
 };
+
+// Delete user (admin only)
+exports.deleteUser = async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    if (!id) return res.status(400).json({ success: false, message: '无效用户 id' });
+
+    const [result] = await pool.execute('DELETE FROM users WHERE id = ?', [id]);
+    if (result.affectedRows === 0) return res.status(404).json({ success: false, message: '用户未找到' });
+    res.json({ success: true, message: '用户已删除' });
+  } catch (err) {
+    console.error('删除用户失败:', err);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+};
