@@ -319,18 +319,32 @@
     </div>
   </section>
 
-  <!-- 远程产品（来自后端 /api/products） -->
-  <section id="remote-products" class="py-12 bg-gray-50">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-lg font-bold text-dark">后端产品 (实时)</h2>
-        <div id="remote-products-status" class="text-sm text-gray-500">加载中…</div>
-      </div>
-      <div id="remote-products-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- 动态加载的产品卡片将插入这里 -->
-      </div>
+
+
+  <!-- 注册模态（前端） -->
+  <div id="register-modal" class="fixed inset-0 flex items-center justify-center bg-black/40 hidden z-50">
+    <div class="bg-white rounded-xl shadow-modal w-full max-w-md p-6">
+      <h3 class="text-xl font-bold mb-4">注册新用户</h3>
+      <form id="register-form" class="space-y-3">
+        <div>
+          <label class="text-sm">用户名</label>
+          <input id="reg-username" type="text" class="w-full px-3 py-2 border rounded-lg input-focus" required>
+        </div>
+        <div>
+          <label class="text-sm">邮箱</label>
+          <input id="reg-email" type="email" class="w-full px-3 py-2 border rounded-lg input-focus" required>
+        </div>
+        <div>
+          <label class="text-sm">密码</label>
+          <input id="reg-password" type="password" class="w-full px-3 py-2 border rounded-lg input-focus" required>
+        </div>
+        <div class="flex justify-end space-x-2">
+          <button type="button" id="reg-cancel" class="px-4 py-2 btn-outline">取消</button>
+          <button type="submit" id="reg-submit" class="px-4 py-2 btn-primary">注册并登录</button>
+        </div>
+      </form>
     </div>
-  </section>
+  </div>
 
         <!-- 文章卡片2-6 保持原有结构，统一添加收藏按钮 -->
         <!-- 文章卡片2 -->
@@ -1699,6 +1713,52 @@
         createContactWidget();
       })();
     })();
-  </script>
+</script>
+
+<!-- Registration frontend logic: sends POST /api/users/register and attempts auto-login -->
+<script>
+  (function(){
+    const API_BASE = document.querySelector('meta[name="api-base"]').getAttribute('content') || '';
+    function showModal(){ document.getElementById('register-modal').classList.remove('hidden'); }
+    function hideModal(){ document.getElementById('register-modal').classList.add('hidden'); }
+    document.getElementById('register-btn')?.addEventListener('click', (e)=>{ e.preventDefault(); showModal(); });
+    document.getElementById('hero-register-btn')?.addEventListener('click', (e)=>{ e.preventDefault(); showModal(); });
+    document.getElementById('reg-cancel')?.addEventListener('click', hideModal);
+
+    const form = document.getElementById('register-form');
+    form && form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const username = document.getElementById('reg-username').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-password').value;
+      if(!username || !email || !password){ alert('请完整填写注册信息'); return; }
+      const submitBtn = document.getElementById('reg-submit');
+      submitBtn.disabled = true; submitBtn.textContent = '提交中…';
+      try{
+        const res = await fetch(API_BASE + '/api/users/register', {
+          method: 'POST', headers: { 'Content-Type':'application/json' },
+          body: JSON.stringify({ username, email, password })
+        });
+        const j = await res.json().catch(()=>({}));
+        if(!res.ok || !j.success){ alert('注册失败：' + (j.message||JSON.stringify(j))); submitBtn.disabled=false; submitBtn.textContent='注册并登录'; return; }
+        // 自动登录
+        const login = await fetch(API_BASE + '/api/users/login', { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, password }) });
+        const lj = await login.json().catch(()=>({}));
+        if(login.ok && lj.success && lj.data && lj.data.token){
+          localStorage.setItem('token', lj.data.token);
+          alert('注册并登录成功');
+          hideModal();
+          // update UI minimal
+          document.getElementById('login-btn')?.classList.add('hidden');
+          document.getElementById('register-btn')?.classList.add('hidden');
+          document.getElementById('user-menu')?.classList.remove('hidden');
+        } else {
+          alert('注册成功，但自动登录失败，请手动登录');
+        }
+      }catch(err){ console.error(err); alert('网络错误'); }
+      submitBtn.disabled=false; submitBtn.textContent='注册并登录';
+    });
+  })();
+</script>
 </body>
 </html>
