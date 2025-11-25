@@ -26,13 +26,18 @@ async function run() {
       CREATE TABLE IF NOT EXISTS products (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
-        slug VARCHAR(255) NOT NULL UNIQUE,
+        slug VARCHAR(255) DEFAULT NULL,
+        series VARCHAR(255) DEFAULT NULL,
+        category_id INT DEFAULT NULL,
         description TEXT,
+        specification TEXT,
         price DECIMAL(12,2) DEFAULT 0.00,
+        image_url VARCHAR(512) DEFAULT '',
         image VARCHAR(512) DEFAULT '',
         status TINYINT DEFAULT 1,
         sort_order INT DEFAULT 0,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE KEY unique_slug (slug)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 

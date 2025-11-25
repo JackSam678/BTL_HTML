@@ -1597,22 +1597,45 @@
       function renderProducts(items){
         rpList.innerHTML = '';
         if(!items || items.length === 0){ rpList.innerHTML = '<p class="text-gray-500">未发现产品。</p>'; return; }
-        items.slice(0,9).forEach(p => {
+        // Normalize possible wrappers
+        const list = Array.isArray(items) ? items : (items.data || items.products || []);
+        if(!Array.isArray(list) || list.length === 0){ rpList.innerHTML = '<p class="text-gray-500">未发现产品。</p>'; return; }
+        list.slice(0,9).forEach(p => {
           const card = document.createElement('div');
           card.className = 'bg-white p-4 rounded-lg shadow-card';
-          const title = p.name || p.title || '未命名产品';
-          const img = p.image_url || p.image || ('https://picsum.photos/seed/' + encodeURIComponent(title) + '/600/400');
-          const desc = p.description || p.summary || '';
-          const price = p.price ? ('¥' + p.price) : '';
+          const id = p.id || p.product_id || '';
+          const title = p.name || p.title || p.series || ('产品 #' + id) ;
+          const img = p.image_url || p.image || p.imageUrl || ('https://picsum.photos/seed/' + encodeURIComponent(title) + '/600/400');
+          const desc = (p.description || p.summary || p.specification || '').substring(0,160);
+          const price = (p.price !== undefined && p.price !== null) ? ('¥' + p.price) : '';
+          const status = (p.status || '').toString().toLowerCase();
+          const created = p.created_at || p.createdAt || '';
+
+          const statusBadge = status ? `<span class="text-xs px-2 py-0.5 rounded-full ${status.includes('ok')||status==='1'||status==='active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}">${status}</span>` : '';
+
+          const link = id ? (`/products/${id}`) : '#';
+
           card.innerHTML = `
-            <img src="${img}" alt="${title}" class="w-full h-40 object-cover rounded-md mb-3" loading="lazy">
-            <h3 class="font-medium text-dark mb-1">${title}</h3>
-            <p class="text-sm text-gray-500 mb-2">${desc}</p>
-            <div class="flex items-center justify-between">
-              <div class="text-primary font-medium">${price}</div>
-              <a href="#" class="text-sm text-primary hover:underline">查看</a>
+            <div class="w-full h-40 overflow-hidden rounded-md mb-3"><img src="${img}" alt="${title}" class="w-full h-full object-cover" loading="lazy"></div>
+            <div class="flex items-start justify-between mb-1">
+              <h3 class="font-medium text-dark">${title}</h3>
+              ${statusBadge}
             </div>
+            <p class="text-sm text-gray-500 mb-3">${desc}</p>
+            <div class="flex items-center justify-between text-sm">
+              <div class="text-primary font-medium">${price}</div>
+              <div class="flex items-center space-x-3">
+                <a href="${link}" class="text-primary hover:underline">详情</a>
+                <a href="#" data-id="${id}" class="add-to-cart text-gray-600 hover:text-primary">加入询价</a>
+              </div>
+            </div>
+            ${created ? `<div class="text-xs text-gray-400 mt-2">更新：${created}</div>` : ''}
           `;
+
+          // Attach simple click handler for enquiry (demo)
+          const enquiry = card.querySelector('.add-to-cart');
+          if(enquiry){ enquiry.addEventListener('click', (ev)=>{ ev.preventDefault(); alert('已把产品 ' + (title) + ' 加入询价（演示）'); }); }
+
           rpList.appendChild(card);
         });
       }
