@@ -29,6 +29,8 @@ app.use('/api/contacts', require('./routes/contactRoutes'));
 // If you need to re-enable, uncomment the following line:
 // app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
+// Admin endpoints
+app.use('/api/admin', require('./routes/adminRoutes'));
 
 // Export app so tests can require it without starting a server
 // If this file is run directly (node config/app.js), start the server.
